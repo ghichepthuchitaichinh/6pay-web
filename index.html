@@ -51,9 +51,15 @@ header .bar{display:flex;justify-content:space-between;align-items:center;height
 .drawer nav a{display:block;padding:13px 24px;text-decoration:none;font-weight:600}
 .drawer nav a:hover,.drawer nav a:focus-visible{background:#EEF3F8;color:var(--teal)}
 
-.hero{padding-top:64px;padding-bottom:56px}
-.hero h1{font-size:clamp(2rem,6vw,3.4rem);line-height:1.15;font-weight:800;margin:0 0 16px;max-width:15em}
-.hero p{font-size:1.1rem;max-width:34em;margin:0 0 28px}
+.hero{padding-top:48px;padding-bottom:48px;text-align:center}
+.hero h1{font-size:clamp(1.05rem,5.4vw,2.8rem);line-height:1.2;font-weight:800;margin:0 0 16px;white-space:nowrap}
+.hero p{font-size:1.05rem;max-width:34em;margin:0 auto 24px}
+
+/* Ảnh màn hình app: cuộn ngang, 2 ảnh mỗi lần */
+.shots{max-width:540px;margin:40px auto 0}
+.shots-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:4px 2px 12px}
+.shots-track::-webkit-scrollbar{display:none}
+.shots-track img{flex:0 0 calc((100% - 14px)/2);width:calc((100% - 14px)/2);height:auto;aspect-ratio:540/1460;object-fit:cover;scroll-snap-align:start;border-radius:14px;border:1px solid var(--line);box-shadow:0 4px 14px rgba(18,38,58,.12);background:#fff}
 section{padding:48px 0;border-top:1px solid var(--line)}
 h2{font-size:1.6rem;margin:0 0 20px}
 .lead{max-width:38em;margin:0 0 16px}
@@ -143,9 +149,21 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:.9rem}
 
 <main id="top">
   <div class="wrap hero" id="gioi-thieu">
-    <h1>Ghi chép thu chi nhanh, gọn, miễn phí</h1>
+    <h1>Công cụ ghi chép thu chi</h1>
     <p>6PAY giúp bạn biết tiền đi đâu mỗi ngày. Mở bằng trình duyệt, cài lên màn hình điện thoại và dùng ngay, không cần tải từ cửa hàng ứng dụng.</p>
     <a class="btn" href="https://app.6pay.vn">Dùng thử 6PAY</a>
+    <div class="shots" aria-label="Hình ảnh các màn hình của 6PAY" role="region">
+      <div class="shots-track" id="shots">
+        <img src="images/01.jpg" alt="Màn hình chính 6PAY" width="540" height="1460" loading="eager" decoding="async">
+        <img src="images/02.jpg" alt="Số dư theo ví" width="540" height="1460" loading="eager" decoding="async">
+        <img src="images/03.jpg" alt="Các hình thức thu nhập" width="540" height="1460" loading="lazy" decoding="async">
+        <img src="images/04.jpg" alt="Cân nhắc trước khi chi" width="540" height="1460" loading="lazy" decoding="async">
+        <img src="images/05.jpg" alt="Tiện ích 6Pay" width="540" height="1460" loading="lazy" decoding="async">
+        <img src="images/06.jpg" alt="Quản lý khoản nợ" width="540" height="1460" loading="lazy" decoding="async">
+        <img src="images/07.jpg" alt="Đọc sách miễn phí" width="540" height="1460" loading="lazy" decoding="async">
+        <img src="images/08.jpg" alt="Đố vui tài chính" width="540" height="1460" loading="lazy" decoding="async">
+      </div>
+    </div>
   </div>
 
   <section>
@@ -379,6 +397,26 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:.9rem}
     setUser(r.member);renderMembers();
     $('doneId').textContent=r.member.id;show('paneDone');this.reset();
   };
+
+  /* ===== Ảnh màn hình: tự cuộn sang trái mỗi 2 giây ===== */
+  (function(){
+    var track=$('shots');if(!track)return;
+    var paused=false,resumeT;
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    function pause(){paused=true;clearTimeout(resumeT)}
+    function resume(){clearTimeout(resumeT);resumeT=setTimeout(function(){paused=false},3000)}
+    ['mouseenter','touchstart','pointerdown','focusin'].forEach(function(ev){track.addEventListener(ev,pause,{passive:true})});
+    ['mouseleave','touchend','pointerup','focusout'].forEach(function(ev){track.addEventListener(ev,resume,{passive:true})});
+    setInterval(function(){
+      if(paused||document.hidden)return;
+      var imgs=track.children,n=imgs.length;if(n<3)return;
+      var step=imgs[1].offsetLeft-imgs[0].offsetLeft;
+      var idx=Math.round(track.scrollLeft/step);
+      var max=track.scrollWidth-track.clientWidth;
+      if(track.scrollLeft>=max-4||idx>=n-2){track.scrollTo({left:0,behavior:'smooth'})}
+      else{track.scrollTo({left:(idx+1)*step,behavior:'smooth'})}
+    },2000);
+  })();
 
   renderMembers();renderUser();
 })();
