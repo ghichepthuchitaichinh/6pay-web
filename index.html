@@ -53,10 +53,10 @@ header .bar{display:flex;justify-content:space-between;align-items:center;height
 
 .hero{padding-top:48px;padding-bottom:48px;text-align:center}
 .hero h1{font-size:clamp(1.05rem,5.4vw,2.8rem);line-height:1.2;font-weight:800;margin:0 0 16px;white-space:nowrap}
-.hero p{font-size:1.05rem;max-width:34em;margin:0 auto 24px}
+.hero p{font-size:1.05rem;max-width:34em;margin:28px auto 24px}
 
 /* Ảnh màn hình app: cuộn ngang, 2 ảnh mỗi lần */
-.shots{max-width:540px;margin:40px auto 0}
+.shots{max-width:540px;margin:24px auto 0}
 .shots-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:4px 2px 12px}
 .shots-track::-webkit-scrollbar{display:none}
 .shots-track img{flex:0 0 calc((100% - 14px)/2);width:calc((100% - 14px)/2);height:auto;aspect-ratio:540/1460;object-fit:cover;scroll-snap-align:start;border-radius:14px;border:1px solid var(--line);box-shadow:0 4px 14px rgba(18,38,58,.12);background:#fff}
@@ -150,20 +150,20 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:.9rem}
 <main id="top">
   <div class="wrap hero" id="gioi-thieu">
     <h1>Công cụ ghi chép thu chi</h1>
-    <p>6PAY giúp bạn biết tiền đi đâu mỗi ngày. Mở bằng trình duyệt, cài lên màn hình điện thoại và dùng ngay, không cần tải từ cửa hàng ứng dụng.</p>
-    <a class="btn" href="https://app.6pay.vn">Dùng thử 6PAY</a>
     <div class="shots" aria-label="Hình ảnh các màn hình của 6PAY" role="region">
       <div class="shots-track" id="shots">
         <img src="images/01.jpg" alt="Màn hình chính 6PAY" width="540" height="1460" loading="eager" decoding="async">
         <img src="images/02.jpg" alt="Số dư theo ví" width="540" height="1460" loading="eager" decoding="async">
-        <img src="images/03.jpg" alt="Các hình thức thu nhập" width="540" height="1460" loading="lazy" decoding="async">
-        <img src="images/04.jpg" alt="Cân nhắc trước khi chi" width="540" height="1460" loading="lazy" decoding="async">
-        <img src="images/05.jpg" alt="Tiện ích 6Pay" width="540" height="1460" loading="lazy" decoding="async">
-        <img src="images/06.jpg" alt="Quản lý khoản nợ" width="540" height="1460" loading="lazy" decoding="async">
-        <img src="images/07.jpg" alt="Đọc sách miễn phí" width="540" height="1460" loading="lazy" decoding="async">
-        <img src="images/08.jpg" alt="Đố vui tài chính" width="540" height="1460" loading="lazy" decoding="async">
+        <img src="images/03.jpg" alt="Các hình thức thu nhập" width="540" height="1460" loading="eager" decoding="async">
+        <img src="images/04.jpg" alt="Cân nhắc trước khi chi" width="540" height="1460" loading="eager" decoding="async">
+        <img src="images/05.jpg" alt="Tiện ích 6Pay" width="540" height="1460" loading="eager" decoding="async">
+        <img src="images/06.jpg" alt="Quản lý khoản nợ" width="540" height="1460" loading="eager" decoding="async">
+        <img src="images/07.jpg" alt="Đọc sách miễn phí" width="540" height="1460" loading="eager" decoding="async">
+        <img src="images/08.jpg" alt="Đố vui tài chính" width="540" height="1460" loading="eager" decoding="async">
       </div>
     </div>
+    <p>6PAY giúp bạn biết tiền đi đâu mỗi ngày. Mở bằng trình duyệt, cài lên màn hình điện thoại và dùng ngay, không cần tải từ cửa hàng ứng dụng.</p>
+    <a class="btn" href="https://app.6pay.vn">Dùng thử 6PAY</a>
   </div>
 
   <section>
@@ -398,24 +398,57 @@ footer{border-top:1px solid var(--line);padding:24px 0;font-size:.9rem}
     $('doneId').textContent=r.member.id;show('paneDone');this.reset();
   };
 
-  /* ===== Ảnh màn hình: tự cuộn sang trái mỗi 2 giây ===== */
+  /* ===== Ảnh màn hình: tự cuộn sang trái mỗi 3 giây, lặp vòng tròn liên tục ===== */
   (function(){
     var track=$('shots');if(!track)return;
+    var originals=Array.prototype.slice.call(track.children);
+    var n=originals.length;if(!n)return;
+
+    /* Nếu ảnh .jpg không tải được (sai đuôi file), thử lần lượt các đuôi khác */
+    var exts=['jpeg','png','webp','JPG','JPEG','PNG','WEBP'];
+    function rescue(img){
+      img.dataset.base=img.getAttribute('src').replace(/\.[^.\/]+$/,'');
+      img.dataset.i='0';
+      img.addEventListener('error',function(){
+        var i=+this.dataset.i;if(i>=exts.length)return;
+        this.dataset.i=i+1;this.src=this.dataset.base+'.'+exts[i];
+      });
+    }
+    originals.forEach(rescue);
+
+    /* Nhân bản 2 ảnh đầu đặt vào cuối để vòng lặp liền mạch */
+    for(var k=0;k<Math.min(2,n);k++){
+      var c=originals[k].cloneNode(true);
+      c.alt='';c.setAttribute('aria-hidden','true');
+      rescue(c);track.appendChild(c);
+    }
+
+    function step(){
+      var imgs=track.children;
+      return imgs.length>1?imgs[1].offsetLeft-imgs[0].offsetLeft:0;
+    }
+    /* Khi đã tới cụm ảnh nhân bản thì nhảy ngay về vị trí tương ứng ở đầu (không bị giật) */
+    function wrap(){
+      var s=step();if(!s)return;
+      if(track.scrollLeft>=n*s-2){track.scrollLeft-=n*s}
+    }
+    var wrapT;
+    track.addEventListener('scroll',function(){clearTimeout(wrapT);wrapT=setTimeout(wrap,120)},{passive:true});
+
     var paused=false,resumeT;
-    if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     function pause(){paused=true;clearTimeout(resumeT)}
     function resume(){clearTimeout(resumeT);resumeT=setTimeout(function(){paused=false},3000)}
     ['mouseenter','touchstart','pointerdown','focusin'].forEach(function(ev){track.addEventListener(ev,pause,{passive:true})});
     ['mouseleave','touchend','pointerup','focusout'].forEach(function(ev){track.addEventListener(ev,resume,{passive:true})});
+
+    if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     setInterval(function(){
       if(paused||document.hidden)return;
-      var imgs=track.children,n=imgs.length;if(n<3)return;
-      var step=imgs[1].offsetLeft-imgs[0].offsetLeft;
-      var idx=Math.round(track.scrollLeft/step);
-      var max=track.scrollWidth-track.clientWidth;
-      if(track.scrollLeft>=max-4||idx>=n-2){track.scrollTo({left:0,behavior:'smooth'})}
-      else{track.scrollTo({left:(idx+1)*step,behavior:'smooth'})}
-    },2000);
+      var s=step();if(!s)return;
+      wrap();
+      var idx=Math.round(track.scrollLeft/s);
+      track.scrollTo({left:(idx+1)*s,behavior:'smooth'});
+    },3000);
   })();
 
   renderMembers();renderUser();
