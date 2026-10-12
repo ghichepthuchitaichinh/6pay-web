@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>6PAY - Ghi chép thu chi miễn phí</title>
-<meta name="description" content="6PAY là ứng dụng ghi chép thu chi cá nhân miễn phí. Cài lên màn hình điện thoại, dùng ngay, không cần tải từ cửa hàng ứng dụng.">
+<title>6PAY - Quản lý tài chính cá nhân, không quảng cáo</title>
+<meta name="description" content="6PAY là ứng dụng quản lý tài chính cá nhân miễn phí: chia tiền vào 6 ví, ghi thu chi, theo dõi nợ và mục tiêu tiết kiệm. Cài lên màn hình điện thoại, dùng ngay, không quảng cáo.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;800&display=swap" rel="stylesheet">
@@ -104,6 +104,17 @@ input:focus{outline:3px solid var(--gold);outline-offset:1px;border-color:var(--
 .success .big{font-size:var(--fs-h);font-weight:800;letter-spacing:.08em;color:var(--teal);margin:6px 0 10px}
 [hidden]{display:none!important}
 
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));margin-top:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.card h3{margin:0 0 4px;font-size:var(--fs-h3)}
+.card p{margin:0}
+.card.trust{border-color:var(--teal);background:#EAF6F5}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;padding:0;list-style:none}
+.tags li{margin:0;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:var(--fs-small);font-weight:600}
+.note{margin:14px 0 0;padding:12px 16px;border-left:4px solid var(--gold);background:#FFF8E1;border-radius:0 8px 8px 0;max-width:38em}
+.steps-h{margin:18px 0 6px;font-size:var(--fs-h3)}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
 ul.contact{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:4px}
 ul.contact a{text-decoration:none;color:var(--teal);font-weight:600}
 ul.contact a:hover{text-decoration:underline}
@@ -142,15 +153,16 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
     <a href="#gioi-thieu">Giới thiệu</a>
     <a href="#su-menh">Sứ mệnh</a>
     <a href="#su-kien">Sự kiện</a>
-    <a href="#quang-cao">Quảng cáo</a>
+    <a href="#tien-ich">Tiện ích</a>
+    <a href="#dong-hanh">Đồng hành</a>
     <a href="#thanh-vien">Thành viên</a>
-    <a href="#cai-dat">Cài 6PAY lên điện thoại</a>
+    <a href="#cai-dat">Hướng dẫn cài app</a>
   </nav>
 </aside>
 
 <main id="top">
   <div class="wrap hero" id="gioi-thieu">
-    <h1>Công cụ ghi chép thu chi</h1>
+    <h1>Quản lý tài chính cá nhân</h1>
     <div class="shots" aria-label="Hình ảnh các màn hình của 6PAY" role="region">
       <div class="shots-track" id="shots">
         <img src="images/images/01.jpg" alt="Màn hình chính 6PAY" width="540" height="1095" loading="eager" decoding="async">
@@ -164,18 +176,21 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
         <img src="images/images/09.jpg" alt="Đố vui tài chính" width="540" height="1095" loading="eager" decoding="async">
       </div>
     </div>
-    <p>6PAY giúp bạn biết tiền đi đâu mỗi ngày. Mở bằng trình duyệt, cài lên màn hình điện thoại và dùng ngay, không cần tải từ cửa hàng ứng dụng.</p>
-    <a class="btn" href="https://app.6pay.vn">Dùng thử 6PAY</a>
+    <p>6PAY giúp bạn biết tiền đi đâu mỗi ngày và chi tiêu có kế hoạch hơn. Miễn phí, không quảng cáo xen vào khi ghi chép, cài lên màn hình điện thoại là dùng ngay, không cần tải từ cửa hàng ứng dụng.</p>
+    <div class="cta-row"><a class="btn" href="https://app.6pay.vn">Dùng thử 6PAY</a><a class="btn ghost" href="#cai-dat">Hướng dẫn cài app</a></div>
   </div>
 
   <section>
     <div class="wrap">
-      <h2>6PAY làm được gì</h2>
-      <div class="features">
-        <div><h3>Ghi thu chi theo ví</h3><p>Chia tiền vào nhiều ví và xem lại giao dịch trong ngày chỉ với một chạm.</p></div>
-        <div><h3>Kế hoạch trong ngày</h3><p>Lập việc cần làm và theo dõi số ngày bạn đã hoàn thành.</p></div>
-        <div><h3>Sao lưu dữ liệu</h3><p>Sao lưu và khôi phục ngay trong phần Cài đặt, không lo mất số liệu khi đổi máy.</p></div>
-        <div><h3>Trò chơi 6Pay Runner</h3><p>Nghỉ giải lao với trò chơi chạy vượt chướng ngại vật tài chính.</p></div>
+      <h2>Giới thiệu</h2>
+      <p class="lead">6PAY là ứng dụng quản lý tài chính cá nhân theo phương pháp 6 ví. Bạn ghi lại mỗi khoản thu chi, 6PAY giúp bạn chia tiền đúng chỗ và nhìn rõ mình còn bao nhiêu trong từng ví.</p>
+      <div class="cards">
+        <div class="card"><h3>Chia tiền vào 6 ví</h3><p>Thiết yếu, Phát triển bản thân, Tiết kiệm, Đầu tư, Chia sẻ và Hưởng thụ. Bạn tự đặt tỷ lệ phân bổ cho từng ví và xem ngay số tiền tương ứng.</p></div>
+        <div class="card"><h3>Ghi thu chi nhanh gọn</h3><p>Ghi thu nhập theo nguồn (lương, thưởng, đầu tư, thu khác) và chi tiêu theo từng ví. Có thể sửa, xóa, lọc theo ngày, tháng, năm.</p></div>
+        <div class="card"><h3>Biết trước khi chi</h3><p>Mỗi ví có gợi ý nên chi vào đâu và nên hạn chế điều gì, giúp bạn cân nhắc trước khi tiêu.</p></div>
+        <div class="card"><h3>Giữ thói quen mỗi ngày</h3><p>Chuỗi ngày ghi chép và điểm thưởng khuyến khích bạn duy trì thói quen quản lý tiền đều đặn.</p></div>
+        <div class="card"><h3>Riêng tư và an toàn</h3><p>Dữ liệu lưu ngay trên điện thoại của bạn, có thể khóa app bằng mật khẩu số, sao lưu và khôi phục bằng một file khi đổi máy.</p></div>
+        <div class="card"><h3>Miễn phí, không cần tải</h3><p>Mở bằng trình duyệt, thêm vào màn hình chính là dùng như một ứng dụng thật.</p></div>
       </div>
     </div>
   </section>
@@ -183,7 +198,12 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
   <section id="su-menh">
     <div class="wrap">
       <h2>Sứ mệnh</h2>
-      <p class="lead">Giúp mọi người hình thành thói quen quản lý tiền bạc một cách đơn giản, miễn phí và dễ dùng ngay trên chiếc điện thoại của mình.</p>
+      <p class="lead">Giúp mọi người Việt Nam làm chủ tiền bạc của mình bằng một công cụ đơn giản, miễn phí và dễ dùng ngay trên chiếc điện thoại. Tiền không tự tạo nên tương lai của bạn, mà cách bạn sử dụng tiền sẽ quyết định điều đó.</p>
+      <div class="cards">
+        <div class="card"><h3>Đơn giản</h3><p>Ai cũng dùng được, từ học sinh, sinh viên đến người đi làm và các gia đình.</p></div>
+        <div class="card"><h3>Miễn phí và minh bạch</h3><p>Không thu phí người dùng, không để quảng cáo làm phiền khi bạn ghi chép.</p></div>
+        <div class="card"><h3>Thói quen tốt</h3><p>Ghi chép thường xuyên để hình thành thói quen tiết kiệm, đầu tư và chia sẻ có kế hoạch.</p></div>
+      </div>
     </div>
   </section>
 
@@ -192,24 +212,48 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
       <h2>Sự kiện</h2>
       <div class="event">
         <h3>Sự kiện đầu tiên sắp diễn ra</h3>
-        <p>Đăng ký để nhận thông báo thời gian, thể lệ và quà tặng ngay khi sự kiện mở.</p>
-        <a class="btn gold" href="https://forms.gle/qYTGjQv1hbyVFxft9">Đăng ký tham gia</a>
+        <p>Cùng ghi chép, cùng tích lũy điểm và cùng nhận quà từ cộng đồng 6PAY. Đăng ký để nhận thông báo thời gian, thể lệ và quà tặng ngay khi sự kiện mở.</p>
+        <div class="links"><a class="btn gold" href="https://forms.gle/qYTGjQv1hbyVFxft9">Đăng ký tham gia</a><a class="btn ghost" style="color:#fff;border-color:#fff" href="https://www.facebook.com/share/19bKZLWVzq/" target="_blank" rel="noopener">Xem trên Facebook</a></div>
       </div>
     </div>
   </section>
 
-  <section id="quang-cao">
+  <section id="tien-ich">
     <div class="wrap">
-      <h2>Quảng cáo</h2>
-      <div class="ad-box">
-        <p>Bạn muốn giới thiệu sản phẩm, dịch vụ đến cộng đồng 6PAY? Hãy liên hệ với chúng tôi để nhận báo giá và vị trí đặt quảng cáo.</p>
+      <h2>Tiện ích</h2>
+      <p class="lead">6PAY có đầy đủ những tiện ích cần thiết nhất cho tài chính và cuộc sống hằng ngày, hoàn toàn miễn phí và không quảng cáo xen vào khi bạn sử dụng.</p>
+      <div class="cards">
+        <div class="card"><h3>Tài chính</h3><p>Quản lý khoản nợ, mục tiêu tiết kiệm, tính lãi vay và lịch trả nợ, tính lãi gửi tiết kiệm, nhắc hóa đơn và chi định kỳ.</p></div>
+        <div class="card"><h3>Công việc và học tập</h3><p>Kế hoạch trong ngày, đồng hồ bấm giờ, đếm ngược và Pomodoro, sổ ghi chú.</p></div>
+        <div class="card"><h3>Đời sống</h3><p>Máy tính, đổi đơn vị đo, lịch vạn niên với lịch âm, ngày giờ tốt và các ngày lễ.</p></div>
+        <div class="card"><h3>Giải trí và học hỏi</h3><p>Đọc sách miễn phí, đố vui tài chính và trò chơi 6Pay Runner để giải lao.</p></div>
       </div>
+      <p class="note"><strong>Không quảng cáo xen vào.</strong> Khi ghi chép và dùng tiện ích, bạn không bị làm phiền bởi quảng cáo. Các chương trình đồng hành nằm riêng ở mục Đồng hành và do bạn chủ động mở xem.</p>
+    </div>
+  </section>
+
+  <section id="dong-hanh">
+    <div class="wrap">
+      <h2>Đồng hành cùng 6PAY</h2>
+      <p class="lead">6PAY có nhiều chương trình đồng hành dành cho doanh nghiệp, cá nhân kinh doanh và cả người dùng, để cộng đồng cùng phát triển.</p>
+      <div class="cards">
+        <div class="card"><h3>Quảng cáo trên 6PAY</h3><p>Giới thiệu thương hiệu, sản phẩm, dịch vụ của bạn đến cộng đồng 6PAY tại khu vực Đồng hành trong app. Liên hệ để nhận báo giá và vị trí đặt quảng cáo.</p><p style="margin-top:8px"><a class="btn sm" href="tel:0342190588">Hotline 0342.19.05.88</a></p></div>
+        <div class="card trust"><h3>Mua hàng trên 6PAY</h3><p>Sản phẩm tiếp thị trên 6PAY đều được chính 6PAY kiểm tra và xác minh về tính minh bạch và chất lượng trước khi giới thiệu. Mỗi sản phẩm có thông tin về người bán, giá và chính sách để bạn xem kỹ trước khi mua.</p></div>
+      </div>
+      <ul class="tags">
+        <li>Giá bạn trả không đổi</li>
+        <li>Thông tin sản phẩm rõ ràng</li>
+        <li>Được 6PAY kiểm tra, xác minh</li>
+      </ul>
+      <p class="hint" style="margin:10px 0 0">Nút “Mua ngay” là liên kết tiếp thị. 6PAY có thể nhận hoa hồng từ người bán và giá bạn trả không đổi.</p>
     </div>
   </section>
 
   <section id="thanh-vien">
     <div class="wrap">
-      <h2>Danh sách thành viên</h2>
+      <h2>Thành viên</h2>
+      <p class="lead" style="margin-bottom:12px">Đăng ký thành viên miễn phí để nhận mã ID, tham gia các sự kiện và chương trình của cộng đồng 6PAY.</p>
+      <p style="margin:0 0 14px"><button class="btn gold" type="button" id="memberReg">Đăng ký thành viên</button></p>
       <p class="count" id="memberCount"></p>
       <div class="table-scroll">
         <table>
@@ -223,13 +267,23 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
 
   <section id="cai-dat">
     <div class="wrap">
-      <h2>Cài 6PAY lên điện thoại</h2>
+      <h2>Hướng dẫn cài app</h2>
+      <p class="lead">Cài một lần, lần sau chỉ cần chạm vào biểu tượng 6PAY ngoài màn hình chính để mở.</p>
+      <h3 class="steps-h">iPhone (Safari)</h3>
       <ol>
-        <li>Mở <a href="https://app.6pay.vn">app.6pay.vn</a> bằng Chrome (Android) hoặc Safari (iPhone).</li>
-        <li>Bấm menu của trình duyệt (dấu ba chấm hoặc nút chia sẻ).</li>
-        <li>Chọn <strong>Thêm vào màn hình chính</strong>.</li>
-        <li>Mở 6PAY từ biểu tượng vừa xuất hiện trên màn hình.</li>
+        <li>Mở <a href="https://app.6pay.vn">app.6pay.vn</a> bằng <strong>Safari</strong>.</li>
+        <li>Bấm nút <strong>Chia sẻ</strong> (hình vuông có mũi tên hướng lên) ở thanh dưới màn hình.</li>
+        <li>Kéo xuống và chọn <strong>Thêm vào Màn hình chính</strong>.</li>
+        <li>Bấm <strong>Thêm</strong> ở góc phải phía trên. Biểu tượng 6PAY sẽ hiện ngoài màn hình chính.</li>
       </ol>
+      <h3 class="steps-h">Android (Chrome)</h3>
+      <ol>
+        <li>Mở <a href="https://app.6pay.vn">app.6pay.vn</a> bằng <strong>Chrome</strong>.</li>
+        <li>Bấm nút <strong>⋮</strong> (ba chấm) ở góc phải phía trên.</li>
+        <li>Chọn <strong>Cài đặt ứng dụng</strong> hoặc <strong>Thêm vào màn hình chính</strong>.</li>
+        <li>Bấm <strong>Cài đặt</strong> hoặc <strong>Thêm</strong>. Biểu tượng 6PAY sẽ hiện ngoài màn hình chính.</li>
+      </ol>
+      <p class="note">Nếu bạn mở link từ Zalo hoặc Facebook, hãy bấm nút <strong>⋯</strong> hoặc <strong>⋮</strong> rồi chọn <strong>Mở bằng trình duyệt</strong> (Safari trên iPhone, Chrome trên Android), sau đó làm theo các bước trên.</p>
       <p style="margin:24px 0 0"><a class="btn" href="https://app.6pay.vn">Mở app</a></p>
     </div>
   </section>
@@ -242,9 +296,10 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
       <li><b>Zalo:</b> <a href="https://zalo.me/0342190588" target="_blank" rel="noopener">0342190588</a></li>
       <li><b>Email:</b> <a href="mailto:6pay.vn@gmail.com">6pay.vn@gmail.com</a></li>
       <li><b>Hỗ trợ:</b> <a href="tel:0342190588">0342190588</a></li>
+      <li><b>Kết nối:</b> <a href="https://www.facebook.com/share/19bKZLWVzq/" target="_blank" rel="noopener">Facebook</a> · <a href="https://zalo.me/g/z7pzytxzrsitdwprfa1d" target="_blank" rel="noopener">Nhóm Zalo hỗ trợ</a> · <a href="https://youtube.com/@6pay-vn" target="_blank" rel="noopener">Youtube</a> · <a href="https://tiktok.com/@6pay.vn" target="_blank" rel="noopener">Tiktok</a></li>
       <li><b>Địa chỉ:</b> Tổ dân phố Yên Hồng, phường Yên Dũng, thành phố Bắc Ninh</li>
     </ul>
-    <div>© 2026 6PAY. Ứng dụng ghi chép thu chi cá nhân.</div>
+    <div>© 2026 6PAY. Ứng dụng quản lý tài chính cá nhân.</div>
   </div>
 </footer>
 
@@ -376,6 +431,7 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
   $('dlgClose').onclick=function(){dlg.close()};
   $('doneOk').onclick=function(){dlg.close()};
   $('toRegister').onclick=function(){openDlg('paneRegister')};
+  $('memberReg').onclick=function(){openDlg('paneRegister')};
   $('toLogin').onclick=function(){openDlg('paneLogin')};
   dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
 
