@@ -96,6 +96,7 @@ label{display:block;font-weight:600;font-size:var(--fs-small);margin:0 0 4px}
 input{width:100%;padding:11px 12px;border:1px solid #B9C5D1;border-radius:8px;font:inherit;font-size:1rem;margin-bottom:12px;background:#fff;color:var(--ink)}
 input:focus{outline:3px solid var(--gold);outline-offset:1px;border-color:var(--ink)}
 .hint{font-size:var(--fs-small);color:#5B6B7B;margin:-6px 0 12px}
+.consent{display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:4px 0 10px}.consent input{width:18px;height:18px;margin:2px 0 0;flex:none}
 .err{color:#C62828;font-size:var(--fs-small);min-height:1.3em;margin:0 0 8px}
 .full{width:100%}
 .switch{text-align:center;margin:16px 0 0;padding-top:14px;border-top:1px solid var(--line);font-size:var(--fs-small)}
@@ -121,6 +122,20 @@ ul.contact a:hover{text-decoration:underline}
 footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-small)}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 </style>
+<script>
+/* ===================== CẤU HÌNH 6PAY-WEB =====================
+   1) GOATCOUNTER_CODE: mã trang GoatCounter (dùng chung với app). Để trống '' là tắt bộ đếm.
+   2) SHEET_API: đường dẫn Web app của Google Apps Script (kết thúc bằng /exec).
+      Để trống '' thì nút đăng ký sẽ báo "đang cập nhật". */
+var GOATCOUNTER_CODE='';
+var SHEET_API='https://script.google.com/macros/s/AKfycby9t_vWUEwE0NhzVUID8BED820Pk7HI5fMECFnYNCcoXrzZvFKhuRD1Lyf0j5AL5EdgQw/exec';
+(function(){
+  if(!GOATCOUNTER_CODE||!/^[a-z0-9-]+$/i.test(GOATCOUNTER_CODE))return;
+  var s=document.createElement('script');s.async=true;s.src='https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter','https://'+GOATCOUNTER_CODE+'.goatcounter.com/count');
+  document.head.appendChild(s);
+})();
+</script>
 </head>
 <body>
 
@@ -177,7 +192,7 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
       </div>
     </div>
     <p>6PAY giúp bạn biết tiền đi đâu mỗi ngày và chi tiêu có kế hoạch hơn. Miễn phí, không quảng cáo xen vào khi ghi chép, cài lên màn hình điện thoại là dùng ngay, không cần tải từ cửa hàng ứng dụng.</p>
-    <div class="cta-row"><a class="btn" href="https://app.6pay.vn">Dùng thử 6PAY</a><a class="btn ghost" href="#cai-dat">Hướng dẫn cài app</a></div>
+    <div class="cta-row"><a class="btn" href="https://app.6pay.vn" data-goatcounter-click="web/bam-dung-thu" data-goatcounter-title="Web: bấm Dùng thử 6PAY">Dùng thử 6PAY</a><a class="btn ghost" href="#cai-dat">Hướng dẫn cài app</a></div>
   </div>
 
   <section>
@@ -284,7 +299,7 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
         <li>Bấm <strong>Cài đặt</strong> hoặc <strong>Thêm</strong>. Biểu tượng 6PAY sẽ hiện ngoài màn hình chính.</li>
       </ol>
       <p class="note">Nếu bạn mở link từ Zalo hoặc Facebook, hãy bấm nút <strong>⋯</strong> hoặc <strong>⋮</strong> rồi chọn <strong>Mở bằng trình duyệt</strong> (Safari trên iPhone, Chrome trên Android), sau đó làm theo các bước trên.</p>
-      <p style="margin:24px 0 0"><a class="btn" href="https://app.6pay.vn">Mở app</a></p>
+      <p style="margin:24px 0 0"><a class="btn" href="https://app.6pay.vn" data-goatcounter-click="web/bam-mo-app" data-goatcounter-title="Web: bấm Mở app">Mở app</a></p>
     </div>
   </section>
 </main>
@@ -334,6 +349,7 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
         <label for="rId">Mã ID</label>
         <input id="rId" readonly aria-describedby="idHint">
         <p class="hint" id="idHint">Mã ID được cấp tự động theo thứ tự đăng ký.</p>
+        <label class="consent"><input type="checkbox" id="rConsent"> <span>Tôi đồng ý để 6PAY lưu tên và số điện thoại để liên hệ về sự kiện, quà tặng; tên và mã ID của tôi được hiển thị trong bảng Thành viên. Số điện thoại không được công khai.</span></label>
         <p class="err" id="rErr" role="alert"></p>
         <button class="btn full" type="submit">Đăng ký</button>
       </form>
@@ -362,27 +378,27 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
 
 <script>
 (function(){
-  /* ===== Lớp dữ liệu =====
-     Hiện lưu bằng localStorage (chỉ trong trình duyệt này).
-     Muốn dùng chung cho mọi người: thay 3 hàm trong "api" bằng
-     fetch() tới máy chủ của bạn. Phần giao diện bên dưới giữ nguyên. */
-  var KEY='6pay_members', SESSION='6pay_session';
-  function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return []}}
-  function save(list){try{localStorage.setItem(KEY,JSON.stringify(list))}catch(e){}}
+  /* ===== Lớp dữ liệu: Google Sheet qua Apps Script =====
+     Danh sách chỉ trả Tên + Mã ID. Số điện thoại chỉ nằm trong Google Sheet của 6PAY. */
+  var SESSION='6pay_session',members=[],loaded=false;
   function pad(n){return String(n).padStart(6,'0')}
+  function post(data){
+    if(!SHEET_API)return Promise.resolve({error:'Chức năng đăng ký đang được cập nhật. Bạn vui lòng quay lại sau nhé.'});
+    return fetch(SHEET_API,{method:'POST',body:JSON.stringify(data)})
+      .then(function(r){return r.json()})
+      .catch(function(){return {error:'Không kết nối được. Vui lòng kiểm tra mạng và thử lại.'}});
+  }
   var api={
-    list:function(){return load().map(function(m){return {name:m.name,id:m.id}})}, // KHÔNG trả số điện thoại
-    nextId:function(){return pad(load().length+1)},
-    register:function(name,phone){
-      var list=load();
-      if(list.some(function(m){return m.phone===phone})) return {error:'Số điện thoại này đã được đăng ký.'};
-      var m={name:name,phone:phone,id:pad(list.length+1)};
-      list.push(m);save(list);return {member:{name:m.name,id:m.id}};
+    load:function(){
+      if(!SHEET_API)return Promise.resolve([]);
+      return fetch(SHEET_API).then(function(r){return r.json()})
+        .then(function(d){members=(d&&d.members)||[];loaded=true;return members})
+        .catch(function(){return members});
     },
-    login:function(phone,id){
-      var m=load().find(function(x){return x.phone===phone&&x.id===id});
-      return m?{member:{name:m.name,id:m.id}}:{error:'Số điện thoại hoặc mã ID không đúng.'};
-    }
+    list:function(){return members},
+    nextId:function(){return loaded?pad(members.length+1):'Tự động cấp'},
+    register:function(name,phone,consent){return post({action:'register',name:name,phone:phone,consent:consent})},
+    login:function(phone,id){return post({action:'login',phone:phone,id:id})}
   };
 
   var $=function(id){return document.getElementById(id)};
@@ -405,7 +421,7 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
       a.textContent=m.name;b.textContent=m.id;b.className='id';
       tr.appendChild(a);tr.appendChild(b);body.appendChild(tr);
     });
-    $('memberEmpty').hidden=list.length>0;
+    $('memberEmpty').hidden=list.length>0||(!loaded&&!!SHEET_API);
     $('memberCount').textContent=list.length?('Tổng số: '+list.length+' thành viên'):'';
   }
 
@@ -440,9 +456,12 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
     var phone=$('lPhone').value.replace(/\s/g,''),id=$('lId').value.trim();
     if(!phoneRe.test(phone)){$('lErr').textContent='Số điện thoại gồm 10 số, bắt đầu bằng 0.';return}
     if(!/^\d{6}$/.test(id)){$('lErr').textContent='Mã ID gồm 6 chữ số.';return}
-    var r=api.login(phone,id);
-    if(r.error){$('lErr').textContent=r.error;return}
-    setUser(r.member);dlg.close();this.reset();
+    var f=this,btn=f.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Đang kiểm tra...';
+    api.login(phone,id).then(function(r){
+      btn.disabled=false;btn.textContent='Đăng nhập';
+      if(r.error){$('lErr').textContent=r.error;return}
+      setUser(r.member);dlg.close();f.reset();
+    });
   };
 
   $('regForm').onsubmit=function(e){
@@ -450,10 +469,16 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
     var name=$('rName').value.trim().replace(/\s+/g,' '),phone=$('rPhone').value.replace(/\s/g,'');
     if(name.length<2){$('rErr').textContent='Vui lòng nhập tên của bạn.';return}
     if(!phoneRe.test(phone)){$('rErr').textContent='Số điện thoại gồm 10 số, bắt đầu bằng 0.';return}
-    var r=api.register(name,phone);
-    if(r.error){$('rErr').textContent=r.error;return}
-    setUser(r.member);renderMembers();
-    $('doneId').textContent=r.member.id;show('paneDone');this.reset();
+    if(!$('rConsent').checked){$('rErr').textContent='Vui lòng đánh dấu đồng ý để đăng ký.';return}
+    var f=this,btn=f.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Đang đăng ký...';
+    api.register(name,phone,true).then(function(r){
+      btn.disabled=false;btn.textContent='Đăng ký';
+      if(r.error){$('rErr').textContent=r.error;return}
+      setUser(r.member);
+      if(window.goatcounter&&goatcounter.count)try{goatcounter.count({path:'web/dang-ky-thanh-cong',title:'Web: đăng ký thành viên',event:true})}catch(e){}
+      $('doneId').textContent=r.member.id;show('paneDone');f.reset();
+      api.load().then(renderMembers);
+    });
   };
 
   /* ===== Ảnh màn hình: tự cuộn sang trái mỗi 3 giây, lặp vòng tròn liên tục ===== */
@@ -509,7 +534,8 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
     },3000);
   })();
 
-  renderMembers();renderUser();
+  renderUser();renderMembers();
+  if(SHEET_API){$('memberCount').textContent='Đang tải danh sách thành viên...';api.load().then(renderMembers)}
 })();
 </script>
 </body>
