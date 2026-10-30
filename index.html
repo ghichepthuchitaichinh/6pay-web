@@ -81,6 +81,12 @@ th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line)}
 th{background:#EEF3F8;font-size:var(--fs-small)}
 tr:last-child td{border-bottom:0}
 td.id{font-variant-numeric:tabular-nums;font-weight:600;color:var(--teal)}
+.mem-count{margin:0 0 10px;font-weight:600}
+.mem-box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;max-height:340px;overflow-y:auto}
+.mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.mem-grid li{margin:0;text-align:center;padding:8px 4px;border-radius:8px;background:#EEF3F8;font-variant-numeric:tabular-nums;font-weight:600;color:var(--teal)}
+.mem-grid li.new{background:#FFF3C4;color:#8A5A12}
+.mem-empty{margin:0;text-align:center;color:#5B6B7A;padding:12px 4px}
 .empty{padding:14px;text-align:center;color:#5B6B7B}
 .count{margin:0 0 8px;color:#5B6B7B;font-size:var(--fs-small)}
 
@@ -124,9 +130,11 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
 <script>
 /* ===================== CẤU HÌNH 6PAY-WEB =====================
    1) GOATCOUNTER_CODE: mã trang GoatCounter (dùng chung với app). Để trống '' là tắt bộ đếm.
-   2) Danh sách thành viên KHÔNG hiển thị trên web (chỉ chủ 6PAY xem trong Google Sheet "6PAY THÀNH VIÊN").
-      Đăng ký thành viên làm trong app 6PAY. */
+   2) SHEET_API: đường dẫn Web app của Google Apps Script (Sheet "6PAY THÀNH VIÊN").
+      Bảng Thành viên trên web CHỈ hiện mã ID, không hiện tên và số điện thoại.
+      Đăng ký thành viên làm trong app 6PAY; bảng tự cập nhật khi có người đăng ký. */
 var GOATCOUNTER_CODE='';
+var SHEET_API='https://script.google.com/macros/s/AKfycbyORVj1UZPtM9lExh9L5iVTsIwrI9MqefFwe2Z9_R77M6SvKaMxSayxTSxmQiPa_GIBew/exec';
 (function(){
   if(!GOATCOUNTER_CODE||!/^[a-z0-9-]+$/i.test(GOATCOUNTER_CODE))return;
   var s=document.createElement('script');s.async=true;s.src='https://gc.zgo.at/count.js';
@@ -268,7 +276,12 @@ var GOATCOUNTER_CODE='';
       <h2>Thành viên</h2>
       <p class="lead" style="margin-bottom:12px">Đăng ký thành viên miễn phí ngay trong app 6PAY để nhận mã ID, tham gia các sự kiện và chương trình của cộng đồng 6PAY. Trong app, bấm biểu tượng 👤 ở góc trên bên trái trang chủ, nhập tên, số điện thoại và đánh dấu “Đăng ký thành viên 6PAY”.</p>
       <p style="margin:0 0 14px"><a class="btn gold" href="https://app.6pay.vn" data-goatcounter-click="web/bam-dang-ky-trong-app" data-goatcounter-title="Web: bấm Đăng ký trong app">Mở app để đăng ký</a></p>
-      <p class="hint" style="margin:0">🔒 Thông tin thành viên được giữ riêng tư, không hiển thị công khai trên web.</p>
+      <p class="mem-count" id="memberCount" aria-live="polite"></p>
+      <div class="mem-box">
+        <ul class="mem-grid" id="memberGrid" aria-label="Danh sách mã ID thành viên"></ul>
+        <p class="mem-empty" id="memberEmpty" hidden></p>
+      </div>
+      <p class="hint" style="margin:10px 0 0">🔒 Bảng chỉ hiện mã ID. Tên và số điện thoại của thành viên được giữ riêng tư, không hiển thị trên web.</p>
     </div>
   </section>
 
@@ -321,6 +334,52 @@ var GOATCOUNTER_CODE='';
   menuBtn.onclick=openMenu;$('closeMenu').onclick=closeMenu;overlay.onclick=closeMenu;
   drawer.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeMenu)});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+
+  /* ===== Bảng thành viên: CHỈ hiện mã ID (không tên, không số điện thoại) =====
+     Dữ liệu đọc từ Google Sheet qua Apps Script, tự tải lại mỗi 60 giây
+     nên khi có người đăng ký trong app, bảng sẽ cập nhật thêm mã ID mới. */
+  (function(){
+    var grid=$('memberGrid'),count=$('memberCount'),empty=$('memberEmpty');
+    if(!grid||!SHEET_API)return;
+    var shown={},first=true,busy=false;
+    function pad(v){var d=String(v==null?'':v).replace(/\D/g,'');return d?('000000'+Number(d)).slice(-6):''}
+    function ids(d){
+      var list=(d&&(d.members||d.ids))||[],out=[],seen={};
+      list.forEach(function(m){
+        if(m==null)return;
+        /* Bỏ qua người đã hủy thành viên (dòng còn mã ID nhưng tên đã bị xóa) */
+        if(typeof m==='object'&&('name' in m)&&!String(m.name||'').trim())return;
+        var id=pad(typeof m==='object'?(m.id||m.ID||m.memberId):m);
+        if(id&&!seen[id]){seen[id]=1;out.push(id)}
+      });
+      return out.sort();
+    }
+    function render(list){
+      var frag=document.createDocumentFragment(),now={};
+      list.forEach(function(id){
+        var li=document.createElement('li');li.textContent=id;
+        if(!first&&!shown[id])li.className='new';
+        now[id]=1;frag.appendChild(li);
+      });
+      grid.textContent='';grid.appendChild(frag);
+      shown=now;first=false;
+      count.textContent=list.length?('Tổng số: '+list.length.toLocaleString('vi-VN')+' thành viên'):'';
+      empty.hidden=list.length>0;
+      empty.textContent='Chưa có thành viên nào. Hãy là người đầu tiên đăng ký trong app 6PAY!';
+    }
+    function load(){
+      if(busy||document.hidden)return;busy=true;
+      fetch(SHEET_API+(SHEET_API.indexOf('?')>-1?'&':'?')+'t='+Date.now(),{cache:'no-store'})
+        .then(function(r){return r.json()})
+        .then(function(d){render(ids(d))})
+        .catch(function(){if(first){count.textContent='';empty.hidden=false;empty.textContent='Chưa tải được danh sách thành viên. Vui lòng tải lại trang.'}})
+        .then(function(){busy=false});
+    }
+    count.textContent='Đang tải danh sách thành viên...';
+    load();
+    setInterval(load,60000);
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)load()});
+  })();
 
   /* ===== Ảnh màn hình: tự cuộn sang trái mỗi 3 giây, lặp vòng tròn liên tục ===== */
   (function(){
