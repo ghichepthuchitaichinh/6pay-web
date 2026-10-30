@@ -124,11 +124,9 @@ footer{border-top:1px solid var(--line);padding:var(--sp) 0;font-size:var(--fs-s
 <script>
 /* ===================== CẤU HÌNH 6PAY-WEB =====================
    1) GOATCOUNTER_CODE: mã trang GoatCounter (dùng chung với app). Để trống '' là tắt bộ đếm.
-   2) SHEET_API: đường dẫn Web app của Google Apps Script (kết thúc bằng /exec).
-      Web chỉ đọc danh sách thành viên (Tên + Mã ID). Đăng ký thành viên làm trong app 6PAY.
-      Để trống '' thì bảng thành viên sẽ trống. */
+   2) Danh sách thành viên KHÔNG hiển thị trên web (chỉ chủ 6PAY xem trong Google Sheet "6PAY THÀNH VIÊN").
+      Đăng ký thành viên làm trong app 6PAY. */
 var GOATCOUNTER_CODE='';
-var SHEET_API='https://script.google.com/macros/s/AKfycbyORVj1UZPtM9lExh9L5iVTsIwrI9MqefFwe2Z9_R77M6SvKaMxSayxTSxmQiPa_GIBew/exec';
 (function(){
   if(!GOATCOUNTER_CODE||!/^[a-z0-9-]+$/i.test(GOATCOUNTER_CODE))return;
   var s=document.createElement('script');s.async=true;s.src='https://gc.zgo.at/count.js';
@@ -268,16 +266,9 @@ var SHEET_API='https://script.google.com/macros/s/AKfycbyORVj1UZPtM9lExh9L5iVTsI
   <section id="thanh-vien">
     <div class="wrap">
       <h2>Thành viên</h2>
-      <p class="lead" style="margin-bottom:12px">Đăng ký thành viên miễn phí ngay trong app 6PAY để nhận mã ID, tham gia các sự kiện và chương trình của cộng đồng 6PAY. Trong app, bấm biểu tượng 🔐 ở trang chủ, nhập tên, số điện thoại và đánh dấu “Đăng ký thành viên 6PAY”.</p>
+      <p class="lead" style="margin-bottom:12px">Đăng ký thành viên miễn phí ngay trong app 6PAY để nhận mã ID, tham gia các sự kiện và chương trình của cộng đồng 6PAY. Trong app, bấm biểu tượng 👤 ở góc trên bên trái trang chủ, nhập tên, số điện thoại và đánh dấu “Đăng ký thành viên 6PAY”.</p>
       <p style="margin:0 0 14px"><a class="btn gold" href="https://app.6pay.vn" data-goatcounter-click="web/bam-dang-ky-trong-app" data-goatcounter-title="Web: bấm Đăng ký trong app">Mở app để đăng ký</a></p>
-      <p class="count" id="memberCount"></p>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Tên</th><th>Mã ID</th></tr></thead>
-          <tbody id="memberBody"></tbody>
-        </table>
-        <div class="empty" id="memberEmpty" hidden>Chưa có thành viên nào. Hãy là người đầu tiên đăng ký trong app 6PAY!</div>
-      </div>
+      <p class="hint" style="margin:0">🔒 Thông tin thành viên được giữ riêng tư, không hiển thị công khai trên web.</p>
     </div>
   </section>
 
@@ -321,19 +312,6 @@ var SHEET_API='https://script.google.com/macros/s/AKfycbyORVj1UZPtM9lExh9L5iVTsI
 
 <script>
 (function(){
-  /* ===== Danh sách thành viên: đọc từ Google Sheet qua Apps Script =====
-     Đăng ký thành viên được thực hiện trong app 6PAY. Web chỉ hiển thị Tên + Mã ID. */
-  var members=[],loaded=false;
-  var api={
-    load:function(){
-      if(!SHEET_API)return Promise.resolve([]);
-      return fetch(SHEET_API).then(function(r){return r.json()})
-        .then(function(d){members=(d&&d.members)||[];loaded=true;return members})
-        .catch(function(){return members});
-    },
-    list:function(){return members}
-  };
-
   var $=function(id){return document.getElementById(id)};
 
   /* ===== Menu 3 gạch ===== */
@@ -343,19 +321,6 @@ var SHEET_API='https://script.google.com/macros/s/AKfycbyORVj1UZPtM9lExh9L5iVTsI
   menuBtn.onclick=openMenu;$('closeMenu').onclick=closeMenu;overlay.onclick=closeMenu;
   drawer.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeMenu)});
   document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
-
-  /* ===== Bảng thành viên (chỉ tên + mã ID) ===== */
-  function renderMembers(){
-    var list=api.list(),body=$('memberBody');
-    body.textContent='';
-    list.forEach(function(m){
-      var tr=document.createElement('tr'),a=document.createElement('td'),b=document.createElement('td');
-      a.textContent=m.name;b.textContent=m.id;b.className='id';
-      tr.appendChild(a);tr.appendChild(b);body.appendChild(tr);
-    });
-    $('memberEmpty').hidden=list.length>0||(!loaded&&!!SHEET_API);
-    $('memberCount').textContent=list.length?('Tổng số: '+list.length+' thành viên'):'';
-  }
 
   /* ===== Ảnh màn hình: tự cuộn sang trái mỗi 3 giây, lặp vòng tròn liên tục ===== */
   (function(){
@@ -410,8 +375,6 @@ var SHEET_API='https://script.google.com/macros/s/AKfycbyORVj1UZPtM9lExh9L5iVTsI
     },3000);
   })();
 
-  renderMembers();
-  if(SHEET_API){$('memberCount').textContent='Đang tải danh sách thành viên...';api.load().then(renderMembers)}
 })();
 </script>
 </body>
